@@ -13414,3 +13414,47 @@ dl {
     color: #777;
     float: right;
 }
+
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 500px; /* Adjust as needed */
+    border: 1px solid #ccc;
+    padding: 10px;
+    background: #f9f9f9;
+}
+
+.messages {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #ddd;
+}
+
+.message {
+    margin-bottom: 10px;
+}
+
+#message-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+#send-button {
+    align-self: flex-end;
+    padding: 10px 20px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#send-button:hover {
+    background: #0056b3;
+}

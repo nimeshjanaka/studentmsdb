@@ -1,31 +1,37 @@
-<?php
-// Start session (ensure it's the first thing in the file)
-session_start();
+// send-message.php
 
-// Example code to send messages
-// Modify as per your actual logic to handle message sending
+<?php
+session_start();
+require_once('../includes/dbconnection.php'); // Ensure this line is added to include the database connection
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['message'])) {
-        // Process the message here (insert into database, etc.)
         $message = $_POST['message'];
 
-        // Example: Save to database
-        $sender_id = $_SESSION['sturecmsuid']; // Assuming you have a session variable set for student ID
-        $sent_at = date('Y-m-d H:i:s'); // Current timestamp
-        $sql = "INSERT INTO tblmessages (sender_id, message_text, sent_at) VALUES (:sender_id, :message_text, :sent_at)";
-        
+        if (isset($_SESSION['sturecmsuid'])) {
+            $sender_id = $_SESSION['sturecmsuid'];
+            $sender_type = 'student';
+        } elseif (isset($_SESSION['adminid'])) {
+            $sender_id = $_SESSION['adminid'];
+            $sender_type = 'admin';
+        }
+
+        // Debugging output
+        echo "Message: $message, Sender ID: $sender_id, Sender Type: $sender_type";
+
+        $sent_at = date('Y-m-d H:i:s');
+        $sql = "INSERT INTO tblmessages (sender_id, sender_type, message_text, sent_at) VALUES (:sender_id, :sender_type, :message_text, :sent_at)";
+
         $query = $dbh->prepare($sql);
         $query->bindParam(':sender_id', $sender_id, PDO::PARAM_INT);
+        $query->bindParam(':sender_type', $sender_type, PDO::PARAM_STR);
         $query->bindParam(':message_text', $message, PDO::PARAM_STR);
         $query->bindParam(':sent_at', $sent_at, PDO::PARAM_STR);
-        
+
         if ($query->execute()) {
-            // Message sent successfully
-            header('Location: index.php'); // Redirect back to chat page after sending message
+            header('Location: chat.php'); // Redirect to chat.php instead of index.php
             exit;
         } else {
-            // Handle error
             echo "Error sending message";
         }
     }

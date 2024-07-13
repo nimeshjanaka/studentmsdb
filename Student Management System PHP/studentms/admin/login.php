@@ -4,11 +4,11 @@ error_reporting(0);
 include('includes/dbconnection.php');
 
 if (isset($_POST['login'])) {
-  $username = $_POST['username'];
+  $email = $_POST['email'];
   $password = md5($_POST['password']);
-  $sql = "SELECT ID FROM tbladmin WHERE UserName=:username and Password=:password";
+  $sql = "SELECT ID FROM tbladmin WHERE Email=:email and Password=:password";
   $query = $dbh->prepare($sql);
-  $query->bindParam(':username', $username, PDO::PARAM_STR);
+  $query->bindParam(':email', $email, PDO::PARAM_STR);
   $query->bindParam(':password', $password, PDO::PARAM_STR);
   $query->execute();
   $results = $query->fetchAll(PDO::FETCH_OBJ);
@@ -18,31 +18,29 @@ if (isset($_POST['login'])) {
     }
 
     if (!empty($_POST["remember"])) {
-      //COOKIES for username
-      setcookie("user_login", $_POST["username"], time() + (10 * 365 * 24 * 60 * 60));
-      //COOKIES for password
+      // COOKIES for email
+      setcookie("user_login", $_POST["email"], time() + (10 * 365 * 24 * 60 * 60));
+      // COOKIES for password
       setcookie("userpassword", $_POST["password"], time() + (10 * 365 * 24 * 60 * 60));
     } else {
       if (isset($_COOKIE["user_login"])) {
         setcookie("user_login", "");
-        if (isset($_COOKIE["userpassword"])) {
-          setcookie("userpassword", "");
-        }
+      }
+      if (isset($_COOKIE["userpassword"])) {
+        setcookie("userpassword", "");
       }
     }
-    $_SESSION['login'] = $_POST['username'];
+    $_SESSION['login'] = $_POST['email'];
     echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
   } else {
     echo "<script>alert('Invalid Details');</script>";
   }
 }
-
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
   <title>Smart Study Grade Hub || Login Page</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
@@ -55,9 +53,7 @@ if (isset($_POST['login'])) {
   <!-- endinject -->
   <!-- Layout styles -->
   <link rel="stylesheet" href="css/style.css">
-
 </head>
-
 <body>
   <div class="container-scroller">
     <div class="container-fluid page-body-wrapper full-page-wrapper">
@@ -72,15 +68,10 @@ if (isset($_POST['login'])) {
               <h6 class="font-weight-light">Sign in to continue.</h6>
               <form class="pt-3" id="login" method="post" name="login">
                 <div class="form-group">
-                  <input type="text" class="form-control form-control-lg" placeholder="enter your username" required="true" name="username" value="<?php if (isset($_COOKIE["user_login"])) {
-                                                                                                                                                      echo $_COOKIE["user_login"];
-                                                                                                                                                    } ?>">
+                  <input type="email" class="form-control form-control-lg" placeholder="Enter your email" required="true" name="email" value="<?php if (isset($_COOKIE["user_login"])) { echo $_COOKIE["user_login"]; } ?>">
                 </div>
                 <div class="form-group">
-
-                  <input type="password" class="form-control form-control-lg" placeholder="enter your password" name="password" required="true" value="<?php if (isset($_COOKIE["userpassword"])) {
-                                                                                                                                                          echo $_COOKIE["userpassword"];
-                                                                                                                                                        } ?>">
+                  <input type="password" class="form-control form-control-lg" placeholder="Enter your password" name="password" required="true" value="<?php if (isset($_COOKIE["userpassword"])) { echo $_COOKIE["userpassword"]; } ?>">
                 </div>
                 <div class="mt-3">
                   <button class="btn btn-success btn-block loginbtn" name="login" type="submit">Login</button>
@@ -96,7 +87,6 @@ if (isset($_POST['login'])) {
                   <a href="../index.php" class="btn btn-block btn-facebook auth-form-btn">
                     <i class="icon-social-home mr-2"></i>Back Home </a>
                 </div>
-
               </form>
             </div>
           </div>
@@ -117,5 +107,4 @@ if (isset($_POST['login'])) {
   <script src="js/misc.js"></script>
   <!-- endinject -->
 </body>
-
 </html>

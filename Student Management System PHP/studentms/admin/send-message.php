@@ -1,13 +1,20 @@
-// send-message.php
-
-session_start();
+<?php
 include('includes/dbconnection.php');
 
-$sender_id = $_SESSION['sturecmsaid'];
-$message = $_POST['message'];
+if (isset($_POST['message'])) {
+    $message = $_POST['message'];
+    $sender_id = 5; // Example sender ID, change as needed
 
-$sql = "INSERT INTO tblmessages (sender_id, message_text) VALUES (:sender_id, :message)";
-$query = $dbh->prepare($sql);
-$query->bindParam(':sender_id', $sender_id, PDO::PARAM_INT);
-$query->bindParam(':message', $message, PDO::PARAM_STR);
-$query->execute();
+    $sql = "INSERT INTO tblmessages (message_text, sender_id) VALUES (:message, :sender_id)";
+    $query = $dbh->prepare($sql);
+    $query->bindParam(':message', $message, PDO::PARAM_STR);
+    $query->bindParam(':sender_id', $sender_id, PDO::PARAM_INT);
+    
+    if ($query->execute()) {
+        header('Location: chat.php'); // Redirect to chat.php after successful insert
+        exit;
+    } else {
+        echo "Error sending message";
+    }
+}
+?>
